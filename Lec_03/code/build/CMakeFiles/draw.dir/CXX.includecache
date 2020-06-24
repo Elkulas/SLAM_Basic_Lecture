@@ -6,18 +6,6 @@
 
 #IncludeRegexTransform: 
 
-../Thirdparty/Sophus/sophus/se3.h
-so3.h
-../Thirdparty/Sophus/sophus/so3.h
-
-../Thirdparty/Sophus/sophus/so3.h
-Eigen/Core
--
-Eigen/StdVector
--
-Eigen/Geometry
--
-
 /home/jjj/CodeSrc/Pangolin/build/src/include/pangolin/config.h
 
 /home/jjj/CodeSrc/Pangolin/include/pangolin/compat/type_traits.h
@@ -700,6 +688,18 @@ pangolin/platform.h
 pangolin/video/stream_info.h
 -
 pangolin/utils/picojson.h
+-
+
+/home/jjj/CodeSrc/Sophus_No_Template/sophus/se3.h
+so3.h
+/home/jjj/CodeSrc/Sophus_No_Template/sophus/so3.h
+
+/home/jjj/CodeSrc/Sophus_No_Template/sophus/so3.h
+Eigen/Core
+-
+Eigen/StdVector
+-
+Eigen/Geometry
 -
 
 /home/jjj/Documents/SLAM_Basic_Lecture/Lec_03/code/draw_trajectory.cpp

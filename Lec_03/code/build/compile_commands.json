@@ -1,7 +1,7 @@
 [
 {
   "directory": "/home/jjj/Documents/SLAM_Basic_Lecture/Lec_03/code/build",
-  "command": "/usr/bin/g++-5    -isystem /home/jjj/CodeSrc/Pangolin/include -isystem /home/jjj/CodeSrc/Pangolin/build/src/include -isystem /usr/include/eigen3 -I/home/jjj/Documents/SLAM_Basic_Lecture/Lec_03/code/Thirdparty/Sophus  -std=c++11 -O3 -O3 -DNDEBUG   -o CMakeFiles/draw.dir/draw_trajectory.cpp.o -c /home/jjj/Documents/SLAM_Basic_Lecture/Lec_03/code/draw_trajectory.cpp",
+  "command": "/usr/bin/g++-5    -isystem /home/jjj/CodeSrc/Pangolin/include -isystem /home/jjj/CodeSrc/Pangolin/build/src/include -isystem /usr/include/eigen3 -I/home/jjj/CodeSrc/Sophus_No_Template  -std=c++11 -O3 -O3 -DNDEBUG   -o CMakeFiles/draw.dir/draw_trajectory.cpp.o -c /home/jjj/Documents/SLAM_Basic_Lecture/Lec_03/code/draw_trajectory.cpp",
   "file": "/home/jjj/Documents/SLAM_Basic_Lecture/Lec_03/code/draw_trajectory.cpp"
 }
 ]

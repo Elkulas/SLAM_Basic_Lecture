@@ -6,5 +6,5 @@ CXX_FLAGS = -std=c++11 -O3 -O3 -DNDEBUG
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -isystem /home/jjj/CodeSrc/Pangolin/include -isystem /home/jjj/CodeSrc/Pangolin/build/src/include -isystem /usr/include/eigen3 -I/home/jjj/Documents/SLAM_Basic_Lecture/Lec_03/code/Thirdparty/Sophus 
+CXX_INCLUDES = -isystem /home/jjj/CodeSrc/Pangolin/include -isystem /home/jjj/CodeSrc/Pangolin/build/src/include -isystem /usr/include/eigen3 -I/home/jjj/CodeSrc/Sophus_No_Template 
 

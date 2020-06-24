@@ -91,7 +91,7 @@ draw_EXTERNAL_OBJECTS =
 draw: CMakeFiles/draw.dir/draw_trajectory.cpp.o
 draw: CMakeFiles/draw.dir/build.make
 draw: /home/jjj/CodeSrc/Pangolin/build/src/libpangolin.so
-draw: ../Thirdparty/Sophus/build/libSophus.so
+draw: /home/jjj/CodeSrc/Sophus_No_Template/build/libSophus.so
 draw: /usr/lib/x86_64-linux-gnu/libGLU.so
 draw: /usr/lib/x86_64-linux-gnu/libGL.so
 draw: /usr/lib/x86_64-linux-gnu/libGLEW.so

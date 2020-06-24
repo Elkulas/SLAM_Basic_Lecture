@@ -1,0 +1,17 @@
+[
+{
+  "directory": "/home/jjj/Documents/SLAM_Basic_Lecture/Lec_05/code/build",
+  "command": "/usr/bin/g++-5    -isystem /opt/ros/kinetic/include/opencv-3.3.1-dev -isystem /opt/ros/kinetic/include/opencv-3.3.1-dev/opencv -I/usr/include/eigen3 -I/home/jjj/CodeSrc/Sophus_No_Template  -std=c++11 -O3 -O3 -DNDEBUG   -o CMakeFiles/GN-BA.dir/src/GN-BA.cpp.o -c /home/jjj/Documents/SLAM_Basic_Lecture/Lec_05/code/src/GN-BA.cpp",
+  "file": "/home/jjj/Documents/SLAM_Basic_Lecture/Lec_05/code/src/GN-BA.cpp"
+},
+{
+  "directory": "/home/jjj/Documents/SLAM_Basic_Lecture/Lec_05/code/build",
+  "command": "/usr/bin/g++-5    -isystem /opt/ros/kinetic/include/opencv-3.3.1-dev -isystem /opt/ros/kinetic/include/opencv-3.3.1-dev/opencv -I/usr/include/eigen3 -I/home/jjj/CodeSrc/Sophus_No_Template  -std=c++11 -O3 -O3 -DNDEBUG   -o CMakeFiles/computeORB.dir/src/computeORB.cpp.o -c /home/jjj/Documents/SLAM_Basic_Lecture/Lec_05/code/src/computeORB.cpp",
+  "file": "/home/jjj/Documents/SLAM_Basic_Lecture/Lec_05/code/src/computeORB.cpp"
+},
+{
+  "directory": "/home/jjj/Documents/SLAM_Basic_Lecture/Lec_05/code/build",
+  "command": "/usr/bin/g++-5    -isystem /opt/ros/kinetic/include/opencv-3.3.1-dev -isystem /opt/ros/kinetic/include/opencv-3.3.1-dev/opencv -I/usr/include/eigen3 -I/home/jjj/CodeSrc/Sophus_No_Template  -std=c++11 -O3 -O3 -DNDEBUG   -o CMakeFiles/E2Rt.dir/src/E2Rt.cpp.o -c /home/jjj/Documents/SLAM_Basic_Lecture/Lec_05/code/src/E2Rt.cpp",
+  "file": "/home/jjj/Documents/SLAM_Basic_Lecture/Lec_05/code/src/E2Rt.cpp"
+}
+]

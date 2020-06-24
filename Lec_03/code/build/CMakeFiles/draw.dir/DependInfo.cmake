@@ -13,7 +13,7 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/home/jjj/CodeSrc/Pangolin/include"
   "/home/jjj/CodeSrc/Pangolin/build/src/include"
   "/usr/include/eigen3"
-  "../Thirdparty/Sophus"
+  "/home/jjj/CodeSrc/Sophus_No_Template"
   )
 
 # Targets to which this target links.
