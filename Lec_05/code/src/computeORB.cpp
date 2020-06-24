@@ -1,5 +1,5 @@
 //
-// Created by 高翔 on 2017/12/19.
+//
 // 本程序演示ORB是如何提取、计算和匹配的
 //
 
@@ -10,13 +10,13 @@
 using namespace std;
 
 // global variables
-string first_file = "./1.png";
-string second_file = "./2.png";
+string first_file = "../image/1.png";
+string second_file = "../image/2.png";
 
 const double pi = 3.1415926;    // pi
 
 
-// TODO implement this function
+// TODO: implement this function
 /**
  * compute the angle for ORB descriptor
  * @param [in] image input image
@@ -24,7 +24,7 @@ const double pi = 3.1415926;    // pi
  */
 void computeAngle(const cv::Mat &image, vector<cv::KeyPoint> &keypoints);
 
-// TODO implement this function
+// TODO: implement this function
 /**
  * compute ORB descriptor
  * @param [in] image the input image
@@ -34,7 +34,7 @@ void computeAngle(const cv::Mat &image, vector<cv::KeyPoint> &keypoints);
 typedef vector<bool> DescType;  // type of descriptor, 256 bools
 void computeORBDesc(const cv::Mat &image, vector<cv::KeyPoint> &keypoints, vector<DescType> &desc);
 
-// TODO implement this function
+// TODO: implement this function
 /**
  * brute-force match two sets of descriptors
  * @param desc1 the first descriptor
@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
     // detect FAST keypoints using threshold=40
     vector<cv::KeyPoint> keypoints;
     cv::FAST(first_image, keypoints, 40);
-    cout << "keypoints: " << keypoints.size() << endl;
+    cout << "keypoints number: " << keypoints.size() << endl;
 
     // compute angle for each keypoint
     computeAngle(first_image, keypoints);
@@ -107,11 +107,32 @@ int main(int argc, char **argv) {
 // compute the angle
 void computeAngle(const cv::Mat &image, vector<cv::KeyPoint> &keypoints) {
     int half_patch_size = 8;
+    cout << "OKKKKKK" <<endl;
     for (auto &kp : keypoints) {
 	// START YOUR CODE HERE (~7 lines)
         kp.angle = 0; // compute kp.angle 
+        // 判断合格的特征点
+        cv::Point2d pt;
+        if((pt.x-half_patch_size<0)||(pt.x+half_patch_size>image.cols)||(pt.y-half_patch_size>0)||(pt.y+7<image.rows))
+        {
+            continue;
+        }
+        double m00=0, m01=0, m10=0;
+        for(int i = -half_patch_size; i<half_patch_size ; i++){
+            const uchar* col = image.ptr<uchar>(pt.y+i);
+            for(int j = -half_patch_size; j < half_patch_size; j++)
+            {
+                m00+= col[(int)pt.x + j];
+                m10+= j * col[(int)pt.x + j];
+                m01+= i * col[(int)pt.x + j];
+            }  
+        }
+        kp.angle = std::atan2(m01,m10)*180/pi;
+        cout<< "angle:::" << kp.angle << endl; 
+
         // END YOUR CODE HERE
     }
+    cout << "OKKKKKK FINISHED" <<endl;
     return;
 }
 
@@ -382,8 +403,29 @@ void computeORBDesc(const cv::Mat &image, vector<cv::KeyPoint> &keypoints, vecto
         DescType d(256, false);
         for (int i = 0; i < 256; i++) {
             // START YOUR CODE HERE (~7 lines)
-            d[i] = 0;  // if kp goes outside, set d.clear()
-	    // END YOUR CODE HERE
+            float sintha = std::sin(kp.angle * pi / 180);
+            float costha = std::cos(kp.angle * pi / 180);
+            // 计算旋转之后的位置的增量
+            float up_ = costha * ORB_pattern[4 * i + 0 ] - sintha * ORB_pattern[4 *  i + 1]; // up = cos*up - sin*vp
+            float vp_ = sintha * ORB_pattern[4 * i + 0 ] + costha * ORB_pattern[4 *  i + 1]; // vp = sin*up + cos*vp
+            float uq_ = costha * ORB_pattern[4 * i + 2 ] - sintha * ORB_pattern[4 *  i + 3]; // uq = cos*uq - sin*vq
+            float vq_ = sintha * ORB_pattern[4 * i + 2 ] + costha * ORB_pattern[4 *  i + 3]; // vq = sin*uq + cos*vq
+            cv::Point2f p(up_, vp_);
+            cv::Point2f q(uq_, vq_);
+            // 将计算得到的增量更新至kp上的坐标
+            p = p + kp.pt;
+            q = q + kp.pt;
+
+            // 判断是否越界
+            if (p.x > image.cols || p.y > image.rows || q.x > image.cols || q.y > image.rows || 
+                p.x < 0 || p.y < 0 || q.x < 0 || q.y < 0){
+                d.clear();  // if kp goes outside, set d.clear()
+                // 一旦出界，直接略过这个kp
+                break;
+            }
+            // 判断像素值大小并写入
+            d[i] = image.at<uchar>(p) > image.at<uchar>(q) ? 0 : 1;
+	        // END YOUR CODE HERE
         }
         desc.push_back(d);
     }
@@ -401,7 +443,36 @@ void bfMatch(const vector<DescType> &desc1, const vector<DescType> &desc2, vecto
     int d_max = 50;
 
     // START YOUR CODE HERE (~12 lines)
-    // find matches between desc1 and desc2. 
+    // find matches between desc1 and desc2.
+    for (size_t i = 0; i < desc1.size() ; i++)
+    {
+        // 如果描述子为空，继续下一个
+        if (desc1[i].empty()) continue;
+        int dis_min= 256;
+        int index = -1;
+        
+        for (size_t j = 0; j < desc2.size(); j++)
+        {
+            if(desc2[j].empty()) continue;
+            int distance = 0;
+            // 计算desc[i]和desc[j]之间的一个distance
+            for (size_t k = 0; k < desc2[j].size(); k++)
+            {
+                distance += desc1[i][k] ^ desc2[j][k]; // 汉明距离就是做异或运算 Xor 也就是^运算
+            }
+
+            if (distance < dis_min && distance < d_max)
+            {
+                dis_min = distance;
+                index = j;
+            }   
+        }
+        // 判断最小的dsitance和dmax之间的距离
+        if(dis_min < d_max)
+            matches.push_back(cv::DMatch(i,index,dis_min));
+
+    }
+
     // END YOUR CODE HERE
 
     for (auto &m: matches) {
