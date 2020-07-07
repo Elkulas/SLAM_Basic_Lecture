@@ -1,0 +1,1 @@
+/usr/bin/g++-5   -g   CMakeFiles/BAHW1.dir/main.cpp.o  -o BAHW1 -rdynamic 
