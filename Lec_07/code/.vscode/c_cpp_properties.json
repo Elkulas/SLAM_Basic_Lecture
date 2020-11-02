@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/include/eigen3",
+                "/home/jjj/CodeSrc/opencv-3.4.8/build",
+                "/home/jjj/CodeSrc/opencv-3.4.8/include",
+                "/home/jjj/CodeSrc/Sophus_No_Template",
+                "/home/jjj/CodeSrc/opencv-3.4.8/build/installed/include",
+                "/home/jjj/CodeSrc/Pangolin/include",
+                "/home/jjj/CodeSrc/Pangolin/build/src/include"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}

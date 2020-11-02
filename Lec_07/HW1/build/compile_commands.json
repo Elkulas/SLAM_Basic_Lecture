@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/home/jjj/Documents/SLAM_Basic_Lecture/Lec_07/HW1/build",
-  "command": "/usr/bin/g++-5     -g   -o CMakeFiles/BAHW1.dir/main.cpp.o -c /home/jjj/Documents/SLAM_Basic_Lecture/Lec_07/HW1/main.cpp",
-  "file": "/home/jjj/Documents/SLAM_Basic_Lecture/Lec_07/HW1/main.cpp"
-}
-]
