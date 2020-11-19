@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
     // then test multi-level LK
     vector<KeyPoint> kp2_multi;
     vector<bool> success_multi;
-    OpticalFlowMultiLevel(img1, img2, kp1, kp2_multi, success_multi);
+    OpticalFlowMultiLevel(img1, img2, kp1, kp2_multi, success_multi, true);
 
     // use opencv's flow for validation
     vector<Point2f> pt1, pt2;
@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
 
     // plot the differences of those functions
     Mat img2_single;
-    cv::cvtColor(img2, img2_single, CV_GRAY2BGR);
+    cv::cvtColor(img2, img2_single, cv::COLOR_GRAY2BGR);
     for (int i = 0; i < kp2_single.size(); i++) {
         if (success_single[i]) {
             cv::circle(img2_single, kp2_single[i].pt, 2, cv::Scalar(0, 250, 0), 2);
@@ -110,16 +110,32 @@ int main(int argc, char **argv) {
     }
 
     Mat img2_multi;
-    cv::cvtColor(img2, img2_multi, CV_GRAY2BGR);
+    cv::cvtColor(img2, img2_multi, cv::COLOR_GRAY2BGR);
     for (int i = 0; i < kp2_multi.size(); i++) {
         if (success_multi[i]) {
             cv::circle(img2_multi, kp2_multi[i].pt, 2, cv::Scalar(0, 250, 0), 2);
             cv::line(img2_multi, kp1[i].pt, kp2_multi[i].pt, cv::Scalar(0, 250, 0));
         }
     }
+    cv::Mat combine1;
+    cv::hconcat(img1, img2, combine1);
+    cv::drawKeypoints(combine1, kp1, combine1);
+    vector<cv::KeyPoint> newpoint;
+    for (int i = 0; i < kp2_multi.size();i++)
+    {
+        kp2_multi[i].pt.x = kp2_multi[i].pt.x + img2.cols;
+    }
+    cv::drawKeypoints(combine1, kp2_multi, combine1);
+    for (int i = 0; i < kp2_multi.size(); i++) {
+        if (success_multi[i]) {
+            
+            cv::line(combine1, kp1[i].pt, kp2_multi[i].pt, cv::Scalar(0, 250, 0));
+        }
+    }
+    cv::imshow("hi", combine1);
 
     Mat img2_CV;
-    cv::cvtColor(img2, img2_CV, CV_GRAY2BGR);
+    cv::cvtColor(img2, img2_CV, cv::COLOR_GRAY2BGR);
     for (int i = 0; i < pt2.size(); i++) {
         if (status[i]) {
             cv::circle(img2_CV, pt2[i], 2, cv::Scalar(0, 250, 0), 2);
@@ -152,6 +168,8 @@ void OpticalFlowSingleLevel(
     for (size_t i = 0; i < kp1.size(); i++) {
         auto kp = kp1[i];
         double dx = 0, dy = 0; // dx,dy need to be estimated
+        // 如果没有初始值,那么初始kp2也就是使用kp1,所以这边计算得到的dxdy就都是0
+        // 此处的dxdy都是针对当前这个点的
         if (have_initial) {
             dx = kp2[i].pt.x - kp.pt.x;
             dy = kp2[i].pt.y - kp.pt.y;
@@ -168,6 +186,7 @@ void OpticalFlowSingleLevel(
 
             if (kp.pt.x + dx <= half_patch_size || kp.pt.x + dx >= img1.cols - half_patch_size ||
                 kp.pt.y + dy <= half_patch_size || kp.pt.y + dy >= img1.rows - half_patch_size) {   // go outside
+                // 定位的点加上patch的大小在图片范围外面了
                 succ = false;
                 break;
             }
@@ -199,6 +218,7 @@ void OpticalFlowSingleLevel(
                     } else {
                         // Inverse Jacobian
                         // NOTE this J does not change when dx, dy is updated, so we can store it and only compute error
+                        // 使用在template图像上点的梯度
                         J.x() = double(GetPixelValue(img1, u1 + 1, v1) - GetPixelValue(img1, u1 - 1, v1))/2;
                         J.y() = double(GetPixelValue(img1, u1, v1 + 1) - GetPixelValue(img1, u1, v1 - 1))/2;
                         error = double(GetPixelValue(img2, u2, v2) - GetPixelValue(img1, u1, v1));
@@ -240,7 +260,7 @@ void OpticalFlowSingleLevel(
             dy += update[1];
             lastCost = cost;
             succ = true;
-        }
+        } // 结束一个特征点的GN迭代
 
         success.push_back(succ);
 
@@ -276,6 +296,8 @@ void OpticalFlowMultiLevel(
         // 生成不同分辨率的图像，并存放到pyr容器中
         Mat img1_temp, img2_temp;
         // 使用resize函数对图像进行分辨率重构
+        // 同时对第一张和第二张图片进行分辨率重构
+        // vector序号从低到高说明金字塔层数从低到高
         cv::resize(img1, img1_temp, cv::Size(img1.cols * scales[i], img1.rows * scales[i]));
         cv::resize(img2, img2_temp, cv::Size(img2.cols * scales[i], img2.rows * scales[i]));
         pyr1.push_back(img1_temp);
@@ -304,6 +326,7 @@ void OpticalFlowMultiLevel(
         {
             KeyPoint kp1_temp;
             kp1_temp = kp1[j]; // 这里之前写了一个bug，是kp1[j],不是kp1[i]
+            // 乘以该层的缩放系数
             kp1_temp.pt = kp1_temp.pt * scales[i];
             kp1_now.push_back(kp1_temp);
             // 对所有上一层的kp2进行尺度上的转化, 进行放大
@@ -317,7 +340,8 @@ void OpticalFlowMultiLevel(
         }
         vsucc.clear();
         // 获得该层第二幅图像中的对应特征点
-        OpticalFlowSingleLevel(pyr1[i], pyr2[i], kp1_now, kp2_now, vsucc, false);
+        // 所以之前但产能中设计kp2存在初值就是为了给这里服务的
+        OpticalFlowSingleLevel(pyr1[i], pyr2[i], kp1_now, kp2_now, vsucc, inverse);
         cout<<"pyramid: "<<i<<" kp2_last size: "<<kp2_last.size()<<"kp2_nowsize "<<kp2_now.size()<<endl;
         if(i == 3)
         for(int k = 0; k < kp2_now.size(); k++) 
@@ -325,7 +349,7 @@ void OpticalFlowMultiLevel(
         // 将上一层的kp2存入last，将now清空
         kp2_last.clear();
         kp2_last.swap(kp2_now);
-    }
+    } // 结束金字塔层数的迭代
     kp2 = kp2_last;
     success = vsucc;
 

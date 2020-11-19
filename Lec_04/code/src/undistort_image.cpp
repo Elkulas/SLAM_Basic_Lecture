@@ -6,15 +6,20 @@
 
 using namespace std;
 
-string image_file = "../image/test.png";   // 请确保路径正确
+string image_file = "/home/jjj/NGCLAB/SensorDriver/udistort/image/test2.bmp";   // 请确保路径正确
 
 int main(int argc, char **argv) {
 
     // 本程序需要你自己实现去畸变部分的代码。尽管我们可以调用OpenCV的去畸变，但自己实现一遍有助于理解。
     // 畸变参数
-    double k1 = -0.28340811, k2 = 0.07395907, p1 = 0.00019359, p2 = 1.76187114e-05;
+    // double k1 = -0.28340811, k2 = 0.07395907, p1 = 0.00019359, p2 = 1.76187114e-05;
+    // // 内参
+    // double fx = 458.654, fy = 457.296, cx = 367.215, cy = 248.375;
+
+    double k1 = -0.482575219159269, k2 = 0.305372657009255, k3 = -0.116353890768303, p1 = 2.875811241413620e-04, p2 = -9.783970247389863e-05;
     // 内参
-    double fx = 458.654, fy = 457.296, cx = 367.215, cy = 248.375;
+    double fx = 4.401844147106322e+02, fy = 4.398887665018974e+02, cx = 3.246975373514975e+02, cy = 2.543902325439119e+02;
+
 
     cv::Mat image = cv::imread(image_file,0);   // 图像是灰度图，CV_8UC1
     int rows = image.rows, cols = image.cols;
@@ -36,8 +41,8 @@ int main(int argc, char **argv) {
             double r = sqrt(pow(x,2) + pow(y,2));
 
             // 计算矫正之后的图像坐标
-            double x_distorted = x * (1 + k1 * pow(r,2) + k2*pow(r,4)) + 2*p1*x*y + p2*(pow(r,2)+2*pow(x,2));
-            double y_distorted = y * (1 + k1 * pow(r,2) + k2*pow(r,4)) + p1*(pow(r,2)+2*pow(y,2)) + 2*p2*x*y;
+            double x_distorted = x * (1 + k1 * pow(r,2) + k2*pow(r,4) + k3*pow(r,6)) + 2*p1*x*y + p2*(pow(r,2)+2*pow(x,2));
+            double y_distorted = y * (1 + k1 * pow(r,2) + k2*pow(r,4) + k3*pow(r,6)) + p1*(pow(r,2)+2*pow(y,2)) + 2*p2*x*y;
 
             // 将成像平面点转化为像素平面的点
             u_distorted = x_distorted * fx + cx;
