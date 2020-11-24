@@ -121,6 +121,7 @@ void DirectPoseEstimationSingleLayer(
 
     double cost = 0, lastCost = 0;
     int nGood = 0;  // good projections
+    // 存放成功投影的容器
     VecVector2d goodProjection;
 
     for (int iter = 0; iter < iterations; iter++) {
@@ -145,6 +146,7 @@ void DirectPoseEstimationSingleLayer(
             v_ref - half_patch_size < 0 || v_ref + half_patch_size >= img1.rows ) continue;
 
             // 将像素平面点转化到实际像平面上以及三维坐标点
+            // 也就是执行pai-1这个步骤, 反投影
             double z_ref = depth_ref[i];
             double x_ref = (u_ref - cx) * z_ref/fx;
             double y_ref = (v_ref - cy) * z_ref/fy;
@@ -163,6 +165,7 @@ void DirectPoseEstimationSingleLayer(
             if(u - half_patch_size < 0 || u + half_patch_size >= img2.cols || 
             v - half_patch_size < 0 || v + half_patch_size >= img2.rows ) continue;
 
+            // 如果在的话那么good点数增加
             nGood++;
             
             goodProjection.push_back(Eigen::Vector2d(u, v));
@@ -216,7 +219,7 @@ void DirectPoseEstimationSingleLayer(
         // TODO START YOUR CODE HERE
         Vector6d update;
         update = H.ldlt().solve(b);
-        cout << "UPdate:::::::::::" << update << endl;
+        cout << "UPdate:::::::::::"<< endl << update << endl;
         T21 = Sophus::SE3::exp(update) * T21;
         // END YOUR CODE HERE
 
@@ -239,8 +242,8 @@ void DirectPoseEstimationSingleLayer(
 
     // in order to help you debug, we plot the projected pixels here
     cv::Mat img1_show, img2_show;
-    cv::cvtColor(img1, img1_show, CV_GRAY2BGR);
-    cv::cvtColor(img2, img2_show, CV_GRAY2BGR);
+    cv::cvtColor(img1, img1_show, cv::COLOR_GRAY2BGR);
+    cv::cvtColor(img2, img2_show, cv::COLOR_GRAY2BGR);
     for (auto &px: px_ref) {
         cv::rectangle(img1_show, cv::Point2f(px[0] - 2, px[1] - 2), cv::Point2f(px[0] + 2, px[1] + 2),
                       cv::Scalar(0, 250, 0));
